@@ -1,0 +1,8 @@
+server:
+	g++ -g -o server ETServer.cpp
+
+client:
+	g++ -g -o client ETClient.cpp
+
+clean:
+	rm client

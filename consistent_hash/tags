@@ -1,0 +1,40 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+ERROK	error.h	/^        ERROK = 0,$/;"	e	enum:chash::ERROR_CODE
+ERROR_CODE	error.h	/^    enum ERROR_CODE$/;"	g	namespace:chash
+ERROR_CODE	error.h	/^    enum ERROR_CODE{ \/\/ Common  ERROK = 0, ERR_NOTOK = 1, \/\/ ERR_EXIST = 2, ERR_CONF = 3, ERR_NOTEXIST = 4, \/\/};$/;"	g	namespace:chash
+ERR_CONF	error.h	/^        ERR_CONF = 3,$/;"	e	enum:chash::ERROR_CODE
+ERR_EXIST	error.h	/^        ERR_EXIST = 2,$/;"	e	enum:chash::ERROR_CODE
+ERR_NOTEXIST	error.h	/^        ERR_NOTEXIST = 4,$/;"	e	enum:chash::ERROR_CODE
+ERR_NOTOK	error.h	/^        ERR_NOTOK = 1, \/\/$/;"	e	enum:chash::ERROR_CODE
+_CHASH__H_	chash.h	5;"	d
+_MAGIC_	chash.cpp	/^    const uint32 hash::_MAGIC_ = (4294705152); \/\/((1<<32)-1) ^ ((1<<18)-1)$/;"	m	class:chash::hash	file:
+_MAGIC_	chash.h	/^            static const uint32 _MAGIC_;$/;"	m	class:chash::hash
+_NODE2VNODE_	chash.cpp	/^    const uint32 hash::_NODE2VNODE_ = 64;$/;"	m	class:chash::hash	file:
+_NODE2VNODE_	chash.h	/^            static const uint32 _NODE2VNODE_;$/;"	m	class:chash::hash
+_OK	chash.h	/^            bool _OK;$/;"	m	class:chash::hash
+_VNODE_NUM_	chash.cpp	/^    const uint32 hash::_VNODE_NUM_ = (16384);  \/\/(1<<14)$/;"	m	class:chash::hash	file:
+_VNODE_NUM_	chash.h	/^            static const uint32 _VNODE_NUM_;$/;"	m	class:chash::hash
+_VNODE_SIZE_	chash.cpp	/^    const uint32 hash::_VNODE_SIZE_ = (262144); \/\/(1<<18)$/;"	m	class:chash::hash	file:
+_VNODE_SIZE_	chash.h	/^            static const uint32 _VNODE_SIZE_;$/;"	m	class:chash::hash
+_nodelist	chash.h	/^            std::map<std::string, bool> _nodelist;$/;"	m	class:chash::hash
+_path	chash.h	/^            std::string _path;$/;"	m	class:chash::hash
+_vnodelist	chash.h	/^            std::map<uint32, std::string> _vnodelist;$/;"	m	class:chash::hash
+addServer	chash.cpp	/^    chash::ERROR_CODE hash::addServer(std::string &node)$/;"	f	class:chash::hash
+addServerLL	chash.cpp	/^    chash::ERROR_CODE hash::addServerLL(std::string &node)$/;"	f	class:chash::hash
+chash	chash.cpp	/^namespace chash$/;"	n	file:
+chash	chash.h	/^namespace chash$/;"	n
+chash	error.h	/^namespace chash {$/;"	n
+dump	chash.cpp	/^    void hash::dump()$/;"	f	class:chash::hash
+flush	chash.cpp	/^    chash::ERROR_CODE hash::flush()$/;"	f	class:chash::hash
+hash	chash.cpp	/^    hash::hash(std::string &confpath) : _path(confpath),_OK(false)$/;"	f	class:chash::hash
+hash	chash.h	/^    class hash {$/;"	c	namespace:chash
+location	chash.cpp	/^    chash::ERROR_CODE hash::location(std::string &key, std::string &ip, uint32 &port)$/;"	f	class:chash::hash
+main	chash.cpp	/^int main(int argc, char **argv)$/;"	f
+removeServer	chash.cpp	/^    chash::ERROR_CODE hash::removeServer(std::string &node)$/;"	f	class:chash::hash
+removeServerLL	chash.cpp	/^    chash::ERROR_CODE hash::removeServerLL(std::string &node)$/;"	f	class:chash::hash
+~hash	chash.cpp	/^    hash::~hash()$/;"	f	class:chash::hash

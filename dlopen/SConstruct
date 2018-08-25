@@ -1,0 +1,14 @@
+
+# -*- mode: python -*-
+import sys, os, os.path, platform, re, time
+
+env = Environment()
+env.AppendUnique(CCFLAGS = '-g')
+env.AppendUnique(CCFLAGS = '-m64')
+env.AppendUnique(CCFLAGS = '-DTARGET_64')
+env.AppendUnique(LINKFLAGS = '-m64')
+
+dso_sources = ['Dso.cpp' ]
+env.SharedLibrary('dso_a', dso_sources)
+env.SharedLibrary('dso_b', dso_sources)
+env.Program('test_main',['test_main.cpp'], LIBS=['dl'], LIBPATH='.',LINKFLAGS = '-export-dynamic' )

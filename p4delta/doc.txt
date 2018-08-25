@@ -1,0 +1,242 @@
+
+1.    3000万以内的随机整数 （0-3000万）
+a)    结论：
+i. p4delta解压速度比group varint 慢50%，压缩比胜过varint， 差异随着数字个数的增长而扩大。
+ii. 使用varint存储异常值部分 来进行改进的p4delta，比原版本慢不到1%， 在压缩比的绝对值+2%，相对值+5% 以上的提高
+iii. 新实现的p4delta是基于kingso的IndexCompression 改进的，
+在数组小于524288时解压性能有接近100% 的提升。数组越大，性能提升比例降低 （kingso将其中的deDelta移出执行，会略有不同）
+附件中的 p4delta.cpp 是新实现版本， IndexCompression.cpp 是Kingso原来版本
+b)   p4delta + varint 和 group varint的对比
+p4delta num:16          encode rate:75 %        decode time: 0.000002 s
+varint  num:16          encode rate:78 %        decode time: 0.000001 s
+p4delta num:32          encode rate:78 %        decode time: 0.000001 s
+varint  num:32          encode rate:78 %        decode time: 0.000001 s
+p4delta num:64          encode rate:69 %        decode time: 0.000001 s
+varint  num:64          encode rate:78 %        decode time: 0.000000 s
+p4delta num:128         encode rate:68 %        decode time: 0.000003 s
+varint  num:128         encode rate:76 %        decode time: 0.000001 s
+p4delta num:256         encode rate:63 %        decode time: 0.000002 s
+varint  num:256         encode rate:71 %        decode time: 0.000002 s
+p4delta num:512         encode rate:59 %        decode time: 0.000002 s
+varint  num:512         encode rate:64 %        decode time: 0.000003 s
+p4delta num:1024        encode rate:56 %        decode time: 0.000003 s
+varint  num:1024        encode rate:58 %        decode time: 0.000004 s
+p4delta num:2048        encode rate:53 %        decode time: 0.000006 s
+varint  num:2048        encode rate:56 %        decode time: 0.000006 s
+p4delta num:4096        encode rate:50 %        decode time: 0.000010 s
+varint  num:4096        encode rate:55 %        decode time: 0.000012 s
+p4delta num:8192        encode rate:45 %        decode time: 0.000018 s
+varint  num:8192        encode rate:54 %        decode time: 0.000027 s
+p4delta num:16384       encode rate:42 %        decode time: 0.000034 s
+varint  num:16384       encode rate:52 %        decode time: 0.000066 s
+p4delta num:32768       encode rate:39 %        decode time: 0.000078 s
+varint  num:32768       encode rate:50 %        decode time: 0.000171 s
+p4delta num:65536       encode rate:36 %        decode time: 0.000139 s
+varint  num:65536       encode rate:45 %        decode time: 0.000416 s
+p4delta num:131072      encode rate:33 %        decode time: 0.000307 s
+varint  num:131072      encode rate:39 %        decode time: 0.000775 s
+p4delta num:262144      encode rate:30 %        decode time: 0.000677 s
+varint  num:262144      encode rate:33 %        decode time: 0.000972 s
+p4delta num:524288      encode rate:26 %        decode time: 0.001293 s
+varint  num:524288      encode rate:31 %        decode time: 0.001412 s
+p4delta num:1048576     encode rate:23 %        decode time: 0.003009 s
+varint  num:1048576     encode rate:31 %        decode time: 0.002877 s
+p4delta num:2097152     encode rate:19 %        decode time: 0.008808 s
+varint  num:2097152     encode rate:31 %        decode time: 0.005818 s
+c)    p4delta 和 group varint的对比
+p4delta num:16          encode rate:75 %        decode time: 0.000002 s
+varint  num:16          encode rate:78 %        decode time: 0.000001 s
+p4delta num:32          encode rate:78 %        decode time: 0.000001 s
+varint  num:32          encode rate:78 %        decode time: 0.000001 s
+p4delta num:64          encode rate:71 %        decode time: 0.000001 s
+varint  num:64          encode rate:78 %        decode time: 0.000001 s
+p4delta num:128         encode rate:71 %        decode time: 0.000002 s
+varint  num:128         encode rate:76 %        decode time: 0.000002 s
+p4delta num:256         encode rate:64 %        decode time: 0.000002 s
+varint  num:256         encode rate:71 %        decode time: 0.000003 s
+p4delta num:512         encode rate:60 %        decode time: 0.000002 s
+varint  num:512         encode rate:64 %        decode time: 0.000003 s
+p4delta num:1024        encode rate:56 %        decode time: 0.000003 s
+varint  num:1024        encode rate:58 %        decode time: 0.000005 s
+p4delta num:2048        encode rate:55 %        decode time: 0.000006 s
+varint  num:2048        encode rate:56 %        decode time: 0.000006 s
+p4delta num:4096        encode rate:51 %        decode time: 0.000010 s
+varint  num:4096        encode rate:55 %        decode time: 0.000012 s
+p4delta num:8192        encode rate:47 %        decode time: 0.000018 s
+varint  num:8192        encode rate:54 %        decode time: 0.000027 s
+p4delta num:16384       encode rate:44 %        decode time: 0.000034 s
+varint  num:16384       encode rate:52 %        decode time: 0.000066 s
+p4delta num:32768       encode rate:41 %        decode time: 0.000084 s
+varint  num:32768       encode rate:50 %        decode time: 0.000176 s
+p4delta num:65536       encode rate:38 %        decode time: 0.000135 s
+varint  num:65536       encode rate:45 %        decode time: 0.000417 s
+p4delta num:131072      encode rate:35 %        decode time: 0.000304 s
+varint  num:131072      encode rate:39 %        decode time: 0.000774 s
+p4delta num:262144      encode rate:32 %        decode time: 0.000648 s
+varint  num:262144      encode rate:33 %        decode time: 0.000971 s
+p4delta num:524288      encode rate:28 %        decode time: 0.001261 s
+varint  num:524288      encode rate:31 %        decode time: 0.001413 s
+p4delta num:1048576     encode rate:25 %        decode time: 0.002995 s
+varint  num:1048576     encode rate:31 %        decode time: 0.002877 s
+p4delta num:2097152     encode rate:22 %        decode time: 0.008974 s
+varint  num:2097152     encode rate:31 %        decode time: 0.005836 s
+d)     p4delta + varint 和 Kingso 的 IndexCompression的性能对比
+p4delta  num:16 decode time: 0.000001 s
+idxCmp  num:16 decode time: 0.000001 s
+p4delta  num:32 decode time: 0.000000 s
+idxCmp  num:32 decode time: 0.000001 s
+p4delta  num:64 decode time: 0.000000 s
+idxCmp  num:64 decode time: 0.000000 s
+p4delta  num:128 decode time: 0.000001 s
+idxCmp  num:128 decode time: 0.000002 s
+p4delta  num:256 decode time: 0.000001 s
+idxCmp  num:256 decode time: 0.000002 s
+p4delta  num:512 decode time: 0.000002 s
+idxCmp  num:512 decode time: 0.000006 s
+p4delta  num:1024 decode time: 0.000004 s
+idxCmp  num:1024 decode time: 0.000004 s
+p4delta  num:2048 decode time: 0.000005 s
+idxCmp  num:2048 decode time: 0.000009 s
+p4delta  num:4096 decode time: 0.000009 s
+idxCmp  num:4096 decode time: 0.000017 s
+p4delta  num:8192 decode time: 0.000015 s
+idxCmp  num:8192 decode time: 0.000033 s
+p4delta  num:16384 decode time: 0.000029 s
+idxCmp  num:16384 decode time: 0.000065 s
+p4delta  num:32768 decode time: 0.000060 s
+idxCmp  num:32768 decode time: 0.000129 s
+p4delta  num:65536 decode time: 0.000115 s
+idxCmp  num:65536 decode time: 0.000258 s
+p4delta  num:131072 decode time: 0.000227 s
+idxCmp  num:131072 decode time: 0.000514 s
+p4delta  num:262144 decode time: 0.000466 s
+idxCmp  num:262144 decode time: 0.001015 s
+p4delta  num:524288 decode time: 0.001285 s
+idxCmp  num:524288 decode time: 0.002007 s
+p4delta  num:1048576 decode time: 0.003532 s
+idxCmp  num:1048576 decode time: 0.004125 s
+p4delta  num:2097152 decode time: 0.007252 s
+idxCmp  num:2097152 decode time: 0.008178 s
+p4delta  num:4194304 decode time: 0.014412 s
+idxCmp  num:4194304 decode time: 0.016587 s
+p4delta  num:8388608 decode time: 0.032456 s
+    idxCmp  num:8388608 decode time: 0.033682 s
+2.    正常的随机整数 （0-40亿）
+a)    结论
+                 i.          在64个整数左右的情况下，varint 和 p4delta都可能会出现 压缩无效果，甚至反效果的情况
+               ii.          p4delta 竟然比 vartint 还快， 压缩比也胜过varint
+              iii.          使用varint存储异常值部分 来进行改进的p4delta，综合看待无价值
+              iv.          新实现的p4delta是基于kingso的IndexCompression 改进的，
+在数组小于524288时解压性能有解决100% 的提升。数组越大，性能提升比例降低 （kingso将其中的deDelta移出执行，会略有不同）
+b)   p4delta + varint 和 group varint的对比
+p4delta num:16          encode rate:114 %       decode time: 0.000002 s
+varint  num:16          encode rate:100 %       decode time: 0.000001 s
+p4delta num:32          encode rate:103 %       decode time: 0.000001 s
+varint  num:32          encode rate:102 %       decode time: 0.000000 s
+p4delta num:64          encode rate:95 %        decode time: 0.000001 s
+varint  num:64          encode rate:103 %       decode time: 0.000001 s
+p4delta num:128         encode rate:94 %        decode time: 0.000002 s
+varint  num:128         encode rate:98 %        decode time: 0.000001 s
+p4delta num:256         encode rate:87 %        decode time: 0.000002 s
+varint  num:256         encode rate:91 %        decode time: 0.000002 s
+p4delta num:512         encode rate:81 %        decode time: 0.000002 s
+varint  num:512         encode rate:84 %        decode time: 0.000003 s
+p4delta num:1024        encode rate:79 %        decode time: 0.000004 s
+varint  num:1024        encode rate:81 %        decode time: 0.000004 s
+p4delta num:2048        encode rate:75 %        decode time: 0.000005 s
+varint  num:2048        encode rate:80 %        decode time: 0.000008 s
+p4delta num:4096        encode rate:72 %        decode time: 0.000011 s
+varint  num:4096        encode rate:79 %        decode time: 0.000017 s
+p4delta num:8192        encode rate:69 %        decode time: 0.000019 s
+varint  num:8192        encode rate:78 %        decode time: 0.000037 s
+p4delta num:16384       encode rate:65 %        decode time: 0.000036 s
+varint  num:16384       encode rate:75 %        decode time: 0.000091 s
+p4delta num:32768       encode rate:62 %        decode time: 0.000082 s
+varint  num:32768       encode rate:71 %        decode time: 0.000218 s
+p4delta num:65536       encode rate:59 %        decode time: 0.000142 s
+varint  num:65536       encode rate:65 %        decode time: 0.000421 s
+p4delta num:131072      encode rate:56 %        decode time: 0.000314 s
+varint  num:131072      encode rate:59 %        decode time: 0.000559 s
+p4delta num:262144      encode rate:53 %        decode time: 0.000610 s
+varint  num:262144      encode rate:56 %        decode time: 0.000767 s
+p4delta num:524288      encode rate:50 %        decode time: 0.001539 s
+varint  num:524288      encode rate:55 %        decode time: 0.001500 s
+p4delta num:1048576     encode rate:46 %        decode time: 0.003530 s
+varint  num:1048576     encode rate:54 %        decode time: 0.003537 s
+p4delta num:2097152     encode rate:43 %        decode time: 0.010285 s
+varint  num:2097152     encode rate:53 %        decode time: 0.008487 s
+c)    p4delta 和 group varint的对比
+p4delta num:16          encode rate:110 %       decode time: 0.000002 s
+varint  num:16          encode rate:100 %       decode time: 0.000002 s
+p4delta num:32          encode rate:100 %       decode time: 0.000002 s
+varint  num:32          encode rate:102 %       decode time: 0.000001 s
+p4delta num:64          encode rate:95 %        decode time: 0.000001 s
+varint  num:64          encode rate:103 %       decode time: 0.000001 s
+p4delta num:128         encode rate:94 %        decode time: 0.000002 s
+varint  num:128         encode rate:98 %        decode time: 0.000002 s
+p4delta num:256         encode rate:87 %        decode time: 0.000003 s
+varint  num:256         encode rate:91 %        decode time: 0.000002 s
+p4delta num:512         encode rate:81 %        decode time: 0.000002 s
+varint  num:512         encode rate:84 %        decode time: 0.000003 s
+p4delta num:1024        encode rate:79 %        decode time: 0.000004 s
+varint  num:1024        encode rate:81 %        decode time: 0.000004 s
+p4delta num:2048        encode rate:74 %        decode time: 0.000005 s
+varint  num:2048        encode rate:80 %        decode time: 0.000008 s
+p4delta num:4096        encode rate:72 %        decode time: 0.000009 s
+varint  num:4096        encode rate:79 %        decode time: 0.000016 s
+p4delta num:8192        encode rate:69 %        decode time: 0.000019 s
+varint  num:8192        encode rate:78 %        decode time: 0.000037 s
+p4delta num:16384       encode rate:66 %        decode time: 0.000035 s
+varint  num:16384       encode rate:75 %        decode time: 0.000091 s
+p4delta num:32768       encode rate:63 %        decode time: 0.000083 s
+varint  num:32768       encode rate:71 %        decode time: 0.000218 s
+p4delta num:65536       encode rate:59 %        decode time: 0.000141 s
+varint  num:65536       encode rate:65 %        decode time: 0.000420 s
+p4delta num:131072      encode rate:56 %        decode time: 0.000306 s
+varint  num:131072      encode rate:59 %        decode time: 0.000565 s
+p4delta num:262144      encode rate:53 %        decode time: 0.000614 s
+varint  num:262144      encode rate:56 %        decode time: 0.000767 s
+p4delta num:524288      encode rate:50 %        decode time: 0.001556 s
+varint  num:524288      encode rate:55 %        decode time: 0.001478 s
+p4delta num:1048576     encode rate:47 %        decode time: 0.003381 s
+varint  num:1048576     encode rate:54 %        decode time: 0.003567 s
+p4delta num:2097152     encode rate:44 %        decode time: 0.010183 s
+varint  num:2097152     encode rate:53 %        decode time: 0.008492 s
+d)     p4delta + varint 和 Kingso 的 IndexCompression的性能对比
+p4delta  num:16 decode time: 0.000001 s
+idxCmp  num:16 decode time: 0.000001 s
+p4delta  num:32 decode time: 0.000001 s
+idxCmp  num:32 decode time: 0.000001 s
+p4delta  num:64 decode time: 0.000001 s
+idxCmp  num:64 decode time: 0.000001 s
+p4delta  num:128 decode time: 0.000001 s
+idxCmp  num:128 decode time: 0.000002 s
+p4delta  num:256 decode time: 0.000003 s
+idxCmp  num:256 decode time: 0.000003 s
+p4delta  num:512 decode time: 0.000001 s
+idxCmp  num:512 decode time: 0.000002 s
+p4delta  num:1024 decode time: 0.000003 s
+idxCmp  num:1024 decode time: 0.000006 s
+p4delta  num:2048 decode time: 0.000004 s
+idxCmp  num:2048 decode time: 0.000009 s
+p4delta  num:4096 decode time: 0.000008 s
+idxCmp  num:4096 decode time: 0.000016 s
+p4delta  num:8192 decode time: 0.000016 s
+idxCmp  num:8192 decode time: 0.000033 s
+p4delta  num:16384 decode time: 0.000030 s
+idxCmp  num:16384 decode time: 0.000064 s
+p4delta  num:32768 decode time: 0.000060 s
+idxCmp  num:32768 decode time: 0.000135 s
+p4delta  num:65536 decode time: 0.000121 s
+idxCmp  num:65536 decode time: 0.000271 s
+p4delta  num:131072 decode time: 0.000235 s
+idxCmp  num:131072 decode time: 0.000518 s
+p4delta  num:262144 decode time: 0.000422 s
+idxCmp  num:262144 decode time: 0.001015 s
+p4delta  num:524288 decode time: 0.000934 s
+idxCmp  num:524288 decode time: 0.002061 s
+p4delta  num:1048576 decode time: 0.001856 s
+idxCmp  num:1048576 decode time: 0.004209 s
+p4delta  num:2097152 decode time: 0.007304 s
+    idxCmp  num:2097152 decode time: 0.008236 s
+ 

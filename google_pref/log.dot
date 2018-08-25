@@ -1,0 +1,18 @@
+digraph "profiler_test; 2444 samples" {
+node [width=0.375,height=0.25];
+Legend [shape=box,fontsize=24,shape=plaintext,label="profiler_test\lTotal samples: 2444\lFocusing on: 2444\lDropped nodes with <= 12 abs(samples)\lDropped edges with <= 2 samples\l"];
+N1 [label="__libc_start_main\n0 (0.0%)\rof 2444 (100.0%)\r",shape=box,fontsize=8.0];
+N2 [label="_start\n0 (0.0%)\rof 2444 (100.0%)\r",shape=box,fontsize=8.0];
+N3 [label="main\n0 (0.0%)\rof 2444 (100.0%)\r",shape=box,fontsize=8.0];
+N4 [label="stupidComputing\n0 (0.0%)\rof 2444 (100.0%)\r",shape=box,fontsize=8.0];
+N5 [label="consumeSomeCPUTime1\n1826 (74.7%)\r",shape=box,fontsize=51.2];
+N6 [label="consumeSomeCPUTime2\n618 (25.3%)\rof 1222 (50.0%)\r",shape=box,fontsize=33.1];
+N2 -> N1 [label=2444, weight=235, style="setlinewidth(2.000000)"];
+N1 -> N3 [label=2444, weight=235, style="setlinewidth(2.000000)"];
+N3 -> N4 [label=2444, weight=235, style="setlinewidth(2.000000)"];
+N5 -> N5 [label=1826, weight=191, style="setlinewidth(2.000000)"];
+N4 -> N5 [label=1222, weight=144, style="setlinewidth(2.000000)"];
+N4 -> N6 [label=1222, weight=144, style="setlinewidth(2.000000)"];
+N6 -> N6 [label=618, weight=89, style="setlinewidth(1.517185)"];
+N6 -> N5 [label=604, weight=88, style="setlinewidth(1.482815)"];
+}
